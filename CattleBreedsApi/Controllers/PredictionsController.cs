@@ -21,6 +21,8 @@ public class PredictionsController(
 
         var uploads = await UploadImages(files);
         var job = await classifier.CreatePredictionJob(uploads);
+        // TODO: create a background task to execute the job
+        await classifier.ExecutePredictionJob(job.Id);
 
         return Ok(job);
     }
