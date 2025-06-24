@@ -15,6 +15,21 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
 });
 builder.Services.AddScoped<FileStorage>();
 builder.Services.AddScoped<CattleClassifier>();
+builder.Services.AddScoped<CattleClassifierApi>(provider =>
+{
+    var baseUrl = builder.Configuration.GetValue<string>("CattleBreedsApiSettings:BaseUrl");
+    if (string.IsNullOrEmpty(baseUrl))
+    {
+        throw new InvalidOperationException("CattleBreedsApiSettings:BaseUrl configuration is missing.");
+    }
+    return new CattleClassifierApi(
+        provider.GetRequiredService<ApiDbContext>(),
+        provider.GetRequiredService<IHttpClientFactory>(),
+        provider.GetRequiredService<FileStorage>(),
+        baseUrl
+    );
+});
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
