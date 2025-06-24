@@ -30,4 +30,15 @@ public class FileStorage(ApiDbContext dbContext)
         var fileName = $"{Guid.NewGuid()}{extension}";
         return Path.Combine(directory, fileName);
     }
+    
+    public async Task<FileStream> GetFileStreamAsync(Guid fileId)
+    {
+        var file = await dbContext.UploadFiles.FindAsync(fileId);
+        if (file == null)
+        {
+            throw new FileNotFoundException("File not found", fileId.ToString());
+        }
+        
+        return new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
+    }
 }
