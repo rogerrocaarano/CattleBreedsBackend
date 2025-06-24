@@ -1,5 +1,6 @@
 using CattleBreedsApi.Models;
 using CattleBreedsApi.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CattleBreedsApi.Controllers;
@@ -8,7 +9,8 @@ namespace CattleBreedsApi.Controllers;
 [Route("[controller]")]
 public class PredictionsController(
     FileStorage fileStorage,
-    CattleClassifier classifier
+    CattleClassifier classifier,
+    IBackgroundJobClient backgroundJobs
 ) : ControllerBase
 {
     [HttpPost("classify")]
@@ -21,10 +23,9 @@ public class PredictionsController(
 
         var uploads = await UploadImages(files);
         var job = await classifier.CreatePredictionJob(uploads);
-        // TODO: create a background task to execute the job
-        await classifier.ExecutePredictionJob(job.Id);
+        backgroundJobs.Enqueue(() => classifier.ExecutePredictionJob(job.Id));
 
-        return Ok(job);
+        return Ok(job.Id);
     }
 
     private async Task<List<UploadFile>> UploadImages(List<IFormFile> files)
