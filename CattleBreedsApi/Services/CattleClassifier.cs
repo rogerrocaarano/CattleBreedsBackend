@@ -35,10 +35,23 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
             throw new Exception("Job already processed");
         }
 
+        var predictions = new List<CattlePrediction>();
+
         foreach (var file in job.UploadFiles)
         {
             var prediction = await cattleClassifierApi.ClassifyImage(file.Id);
-            
+            predictions.Add(prediction);
         }
+
+        // getting the best prediction based on confidence
+        var bestPrediction = predictions
+            .OrderByDescending(p => p.Confidence)
+            .ToList()
+            .First();
+        job.Breed = bestPrediction.Confidence < 30 ? null : bestPrediction.Breed;
+        job.Confidence = bestPrediction.Confidence;
+        job.Processed = true;
+        dbContext.CattlePredictionJobs.Update(job);
+        await dbContext.SaveChangesAsync();
     }
 }
