@@ -40,4 +40,16 @@ public class PredictionsController(
 
         return uploads;
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPredictionJob(Guid id)
+    {
+        var job = await classifier.GetPredictionJob(id);
+        if (job == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(job);
+    }
 }

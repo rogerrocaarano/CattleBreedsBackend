@@ -54,4 +54,11 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         dbContext.CattlePredictionJobs.Update(job);
         await dbContext.SaveChangesAsync();
     }
+    
+    public async Task<CattlePredictionJob?> GetPredictionJob(Guid id)
+    {
+        return await dbContext.CattlePredictionJobs
+            .Include(job => job.UploadFiles)
+            .FirstOrDefaultAsync(job => job.Id == id);
+    }
 }
