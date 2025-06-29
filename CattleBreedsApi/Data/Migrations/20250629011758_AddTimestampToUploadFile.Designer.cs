@@ -3,6 +3,7 @@ using System;
 using CattleBreedsApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CattleBreedsApi.Data.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250629011758_AddTimestampToUploadFile")]
+    partial class AddTimestampToUploadFile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
@@ -50,14 +53,8 @@ namespace CattleBreedsApi.Data.Migrations
                     b.Property<float>("Confidence")
                         .HasColumnType("REAL");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("Processed")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("ProcessedAt")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

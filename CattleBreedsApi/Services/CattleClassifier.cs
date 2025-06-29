@@ -12,7 +12,8 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         {
             Id = Guid.NewGuid(),
             UploadFiles = files,
-            Processed = false
+            Processed = false,
+            CreatedAt = DateTime.UtcNow
         };
 
         await dbContext.CattlePredictionJobs.AddAsync(job);
@@ -51,6 +52,7 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         job.Breed = bestPrediction.Confidence < 30 ? null : bestPrediction.Breed;
         job.Confidence = bestPrediction.Confidence;
         job.Processed = true;
+        job.ProcessedAt = DateTime.UtcNow;
         dbContext.CattlePredictionJobs.Update(job);
         await dbContext.SaveChangesAsync();
     }

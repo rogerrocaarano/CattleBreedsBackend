@@ -16,7 +16,8 @@ public class FileStorage(ApiDbContext dbContext)
         var entity = new UploadFile()
         {
             FilePath = filePath,
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
+            Timestamp = DateTime.UtcNow
         };
 
         await dbContext.UploadFiles.AddAsync(entity);

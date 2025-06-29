@@ -7,4 +7,6 @@ public class CattlePredictionJob
     public string? Breed { get; set; }
     public float Confidence { get; set; }
     public ICollection<UploadFile> UploadFiles { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime ProcessedAt { get; set; }
 }
