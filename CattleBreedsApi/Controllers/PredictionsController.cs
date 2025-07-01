@@ -1,3 +1,4 @@
+using CattleBreedsApi.DTOs;
 using CattleBreedsApi.Models;
 using CattleBreedsApi.Services;
 using Hangfire;
@@ -49,7 +50,32 @@ public class PredictionsController(
         {
             return NotFound();
         }
+        
+        if (!job.Processed)
+        {
+            return Ok(new NotCompletedPredictionJobDto
+            {
+                Id = job.Id,
+                Status = "InProgress"
+            });
+        }
+        
+        if (job.Breed == null || job.BestResultImageId == null)
+        {
+            return Ok(new NotCompletedPredictionJobDto
+            {
+                Id = job.Id,
+                Status = "NotValidResult"
+            });
+        }
 
-        return Ok(job);
+        return Ok(new CompletedPredictionJobDto
+        {
+            Id = job.Id,
+            Breed = job.Breed,
+            Confidence = job.Confidence,
+            ImageId = (Guid)job.BestResultImageId!,
+            Status = "ValidResult"
+        });
     }
 }
