@@ -44,6 +44,9 @@ namespace CattleBreedsApi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("BestResultImageId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Breed")
                         .HasColumnType("TEXT");
 
@@ -60,6 +63,8 @@ namespace CattleBreedsApi.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BestResultImageId");
 
                     b.ToTable("CattlePredictionJobs");
                 });
@@ -85,6 +90,15 @@ namespace CattleBreedsApi.Data.Migrations
                     b.HasIndex("CattlePredictionJobId");
 
                     b.ToTable("UploadFiles");
+                });
+
+            modelBuilder.Entity("CattleBreedsApi.Models.CattlePredictionJob", b =>
+                {
+                    b.HasOne("CattleBreedsApi.Models.UploadFile", "BestResultImage")
+                        .WithMany()
+                        .HasForeignKey("BestResultImageId");
+
+                    b.Navigation("BestResultImage");
                 });
 
             modelBuilder.Entity("CattleBreedsApi.Models.UploadFile", b =>

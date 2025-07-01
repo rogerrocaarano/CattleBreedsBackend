@@ -53,6 +53,7 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         job.Confidence = bestPrediction.Confidence;
         job.Processed = true;
         job.ProcessedAt = DateTime.UtcNow;
+        job.BestResultImageId = bestPrediction.UploadFileId;
         dbContext.CattlePredictionJobs.Update(job);
         await dbContext.SaveChangesAsync();
     }
@@ -60,7 +61,7 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
     public async Task<CattlePredictionJob?> GetPredictionJob(Guid id)
     {
         return await dbContext.CattlePredictionJobs
-            .Include(job => job.UploadFiles)
+            .Include(job => job.BestResultImage)
             .FirstOrDefaultAsync(job => job.Id == id);
     }
 }

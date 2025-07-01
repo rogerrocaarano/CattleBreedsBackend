@@ -9,4 +9,6 @@ public class CattlePredictionJob
     public ICollection<UploadFile> UploadFiles { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ProcessedAt { get; set; }
+    public Guid? BestResultImageId { get; set; }
+    public UploadFile? BestResultImage { get; set; }
 }
