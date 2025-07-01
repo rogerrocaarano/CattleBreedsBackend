@@ -9,14 +9,15 @@ public class FileStorage(ApiDbContext dbContext)
     {
         var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         Directory.CreateDirectory(uploadDirectory);
-        var filePath = BuildFilePath(uploadDirectory, file);
+        var fileId = Guid.NewGuid();
+        var filePath = BuildFilePath(fileId, uploadDirectory, file);
         await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
 
         var entity = new UploadFile()
         {
             FilePath = filePath,
-            Id = Guid.NewGuid(),
+            Id = fileId,
             Timestamp = DateTime.UtcNow
         };
 
@@ -25,10 +26,10 @@ public class FileStorage(ApiDbContext dbContext)
         return entity;
     }
 
-    private string BuildFilePath(string directory, IFormFile file)
+    private string BuildFilePath(Guid id, string directory, IFormFile file)
     {
         var extension = Path.GetExtension(file.FileName);
-        var fileName = $"{Guid.NewGuid()}{extension}";
+        var fileName = $"{id}{extension}";
         return Path.Combine(directory, fileName);
     }
     
