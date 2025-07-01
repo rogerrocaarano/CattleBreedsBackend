@@ -49,7 +49,7 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
             .OrderByDescending(p => p.Confidence)
             .ToList()
             .First();
-        job.Breed = bestPrediction.Confidence < 30 ? null : bestPrediction.Breed;
+        job.Breed = bestPrediction.Confidence < 80 ? null : bestPrediction.Breed;
         job.Confidence = bestPrediction.Confidence;
         job.Processed = true;
         job.ProcessedAt = DateTime.UtcNow;
