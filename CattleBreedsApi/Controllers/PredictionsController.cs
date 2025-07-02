@@ -41,7 +41,7 @@ public class PredictionsController(
 
         return uploads;
     }
-    
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPredictionJob(Guid id)
     {
@@ -50,7 +50,7 @@ public class PredictionsController(
         {
             return NotFound();
         }
-        
+
         if (!job.Processed)
         {
             return Ok(new NotCompletedPredictionJobDto
@@ -59,7 +59,7 @@ public class PredictionsController(
                 Status = "InProgress"
             });
         }
-        
+
         if (job.Breed == null || job.BestResultImageId == null)
         {
             return Ok(new NotCompletedPredictionJobDto
@@ -78,5 +78,17 @@ public class PredictionsController(
             Status = "ValidResult",
             Weight = job.Weight
         });
+    }
+
+    [HttpGet("image/{fileId}")]
+    public async Task<IActionResult> GetImage(Guid fileId)
+    {
+        var fileData = await fileStorage.GetFile(fileId);
+        if (fileData == null)
+        {
+            return NotFound();
+        }
+
+        return File(fileData.Content, fileData.ContentType, fileData.FileName);
     }
 }
