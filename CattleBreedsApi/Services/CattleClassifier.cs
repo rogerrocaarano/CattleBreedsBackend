@@ -54,6 +54,7 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         job.Processed = true;
         job.ProcessedAt = DateTime.UtcNow;
         job.BestResultImageId = bestPrediction.UploadFileId;
+        job.Weight = bestPrediction.Weight;
         dbContext.CattlePredictionJobs.Update(job);
         await dbContext.SaveChangesAsync();
     }

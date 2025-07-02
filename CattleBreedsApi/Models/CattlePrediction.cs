@@ -6,4 +6,5 @@ public class CattlePrediction
     public Guid UploadFileId { get; set; }
     public required string Breed { get; set; }
     public float Confidence { get; set; }
+    public float Weight { get; set; }
 }

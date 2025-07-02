@@ -7,4 +7,5 @@ public class CompletedPredictionJobDto
     public float Confidence { get; set; }
     public Guid ImageId { get; set; }
     public string Status { get; set; }
+    public float Weight { get; set; }
 }

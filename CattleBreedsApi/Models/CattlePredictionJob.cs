@@ -11,4 +11,6 @@ public class CattlePredictionJob
     public DateTime ProcessedAt { get; set; }
     public Guid? BestResultImageId { get; set; }
     public UploadFile? BestResultImage { get; set; }
+    
+    public float Weight { get; set; }
 }

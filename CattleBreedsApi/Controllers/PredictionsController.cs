@@ -75,7 +75,8 @@ public class PredictionsController(
             Breed = job.Breed,
             Confidence = job.Confidence,
             ImageId = (Guid)job.BestResultImageId!,
-            Status = "ValidResult"
+            Status = "ValidResult",
+            Weight = job.Weight
         });
     }
 }
