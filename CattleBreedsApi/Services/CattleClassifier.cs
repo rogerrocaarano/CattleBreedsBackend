@@ -45,20 +45,42 @@ public class CattleClassifier(ApiDbContext dbContext, CattleClassifierApi cattle
         }
 
         // getting the best prediction based on confidence
-        var bestPrediction = predictions
-            .OrderByDescending(p => p.Confidence)
-            .ToList()
-            .First();
-        job.Breed = bestPrediction.Confidence < 80 ? null : bestPrediction.Breed;
-        job.Confidence = bestPrediction.Confidence;
+        var bestPrediction = ValidPrediction(predictions);
+        
+        job.Breed = bestPrediction?.Breed;
+        job.Confidence = bestPrediction?.Confidence ?? 0.0f;
         job.Processed = true;
         job.ProcessedAt = DateTime.UtcNow;
-        job.BestResultImageId = bestPrediction.UploadFileId;
-        job.Weight = bestPrediction.Weight;
+        job.BestResultImageId = bestPrediction?.UploadFileId;
+        job.Weight = bestPrediction?.Weight ?? 0.0f;
         dbContext.CattlePredictionJobs.Update(job);
         await dbContext.SaveChangesAsync();
     }
-    
+
+    private CattlePrediction? ValidPrediction(List<CattlePrediction> predictions)
+    {
+        const float requiredValidSupport = 0.3f; // Al menos el 30% deben respaldar
+        const float confidenceThreshold = 80f;
+
+        if (predictions.Count == 0)
+            return null;
+
+        // Ordenar por confianza descendente
+        var sorted = predictions.OrderByDescending(p => p.Confidence).ToList();
+        var best = sorted.First();
+
+        // Contar cuántas predicciones cumplen con:
+        // - misma raza
+        // - confianza ≥ 80%
+        var supportCount = predictions.Count(p =>
+            p.Breed == best.Breed && p.Confidence >= confidenceThreshold);
+
+        var requiredCount = Math.Max(1, (int)(predictions.Count * requiredValidSupport));
+
+        return supportCount >= requiredCount ? best : null;
+    }
+
+
     public async Task<CattlePredictionJob?> GetPredictionJob(Guid id)
     {
         return await dbContext.CattlePredictionJobs
