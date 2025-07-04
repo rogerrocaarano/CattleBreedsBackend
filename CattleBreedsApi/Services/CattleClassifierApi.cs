@@ -29,7 +29,14 @@ public class CattleClassifierApi(
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Error classifying image: {response.ReasonPhrase}");
+            // throw new Exception($"Error classifying image: {response.ReasonPhrase}");
+            return new CattlePrediction()
+            {
+                Breed = "BadRequest",
+                Confidence = 0.0f,
+                Id = Guid.NewGuid(),
+                UploadFileId = imageId
+            };
         }
 
         var responseContent = await response.Content.ReadAsStringAsync();
